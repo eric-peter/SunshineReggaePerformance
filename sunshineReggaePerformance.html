@@ -37,108 +37,73 @@ const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTzOj0jPJ7XqYZac
 
 
 async function fetchData() {
-
   const response = await fetch(csvUrl);
-
   const data = await response.text();
-
-  const rows = data.split('\n').slice(1); // Header überspringen
+  const rows = data.split('\n').slice(1); // Header-Zeile überspringen
 
   const labels = [];
-
-  const values = [];
-
-
+  const valuesA = [];
+  const valuesB = [];
 
   rows.forEach(row => {
+    const cols = row.split(',');
+    if (cols.length >= 3) {
+      const datum = cols[0].trim();
+      const valA = parseFloat(cols[1]);
+      const valB = parseFloat(cols[2]);
 
-    const [datum, verbrauch] = row.split(',');
-
-    if (datum && verbrauch) {
-
-      labels.push(datum.trim());
-
-      values.push(parseFloat(verbrauch));
-
+      labels.push(datum);
+      valuesA.push(valA);
+      valuesB.push(valB);
     }
-
   });
 
-
-
-  return { labels, values };
-
+  return { labels, valuesA, valuesB };
 }
-
 
 
 async function renderChart() {
-
-  const { labels, values } = await fetchData();
-
-
+  const { labels, valuesA, valuesB } = await fetchData();
 
   new Chart(document.getElementById('verbrauchChart'), {
-
     type: 'line',
-
     data: {
-
       labels: labels,
-
-      datasets: [{
-
-        label: 'Verbrauch in kWh',
-
-        data: values,
-
-        borderColor: '#4CAF50',
-
-        backgroundColor: 'rgba(76, 175, 80, 0.2)',
-
-        tension: 0.3,
-
-        pointBackgroundColor: '#fff',
-
-        pointBorderColor: '#4CAF50'
-
-      }]
-
-    },
-
-    options: {
-
-      responsive: true,
-
-      plugins: {
-
-        legend: { labels: { color: '#eee' } },
-
-        tooltip: {
-
-          callbacks: {
-
-            label: ctx => `${ctx.parsed.y} kWh`
-
-          }
-
+      datasets: [
+        {
+          label: 'Gerät A',
+          data: valuesA,
+          borderColor: '#4CAF50',
+          backgroundColor: 'rgba(76, 175, 80, 0.2)',
+          tension: 0.3
+        },
+        {
+          label: 'Gerät B',
+          data: valuesB,
+          borderColor: '#2196F3',
+          backgroundColor: 'rgba(33, 150, 243, 0.2)',
+          tension: 0.3
         }
-
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { labels: { color: '#eee' } },
+        tooltip: {
+          callbacks: {
+            label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y} kWh`
+          }
+        }
       },
-
       scales: {
-
         x: { ticks: { color: '#ccc' } },
-
         y: { ticks: { color: '#ccc' }, beginAtZero: true }
-
       }
-
     }
-
   });
-
 }
+
 
 
 
