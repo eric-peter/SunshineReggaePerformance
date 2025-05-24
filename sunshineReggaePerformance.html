@@ -28,6 +28,19 @@
 
 <canvas id="verbrauchChart"></canvas>
 
+html, body {
+  height: 100%;
+  margin: 0;
+  background-color: #111;
+  color: #eee;
+  font-family: sans-serif;
+}
+
+#verbrauchChart {
+  display: block;
+  width: 100%;
+  height: 50vh; /* 50% der Viewport-Höhe */
+}
 
 
 <script>
@@ -87,6 +100,7 @@ async function renderChart() {
       ]
     },
     options: {
+      maintainAspectRatio: false;
       responsive: true,
       plugins: {
         legend: { labels: { color: '#eee' } },
@@ -97,16 +111,7 @@ async function renderChart() {
         }
       },
       scales: {
-        x: {
-    type: 'time',
-    time: {
-      unit: 'day',
-      displayFormats: { day: 'MMM D' }
-    },
-    ticks: {
-      autoSkip: true,
-      maxRotation: 0,
-      color: '#ccc' } },
+        x: { ticks: { color: '#ccc' } },
         y: { ticks: { color: '#ccc' }, beginAtZero: true }
       }
     }
