@@ -97,7 +97,16 @@ async function renderChart() {
         }
       },
       scales: {
-        x: { ticks: { color: '#ccc' } },
+        x: {
+    type: 'time',
+    time: {
+      unit: 'day',
+      displayFormats: { day: 'MMM D' }
+    },
+    ticks: {
+      autoSkip: true,
+      maxRotation: 0,
+      color: '#ccc' } },
         y: { ticks: { color: '#ccc' }, beginAtZero: true }
       }
     }
